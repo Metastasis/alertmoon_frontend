@@ -37,7 +37,7 @@ const Home = () => {
         // Redirect to login page
         return router.push(edgeConfig.basePath + "/ui/login")
       })
-  })
+  }, [])
 
   if (!session) {
     // Still loading
