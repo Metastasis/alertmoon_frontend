@@ -1,7 +1,7 @@
 import Head from "next/head"
 import Image from "next/image"
 import styles from "../styles/Home.module.css"
-import { useEffect, useState } from "react"
+import {useCallback, useEffect, useState} from 'react';
 import { useRouter } from "next/router"
 
 // highlight-start
@@ -77,6 +77,8 @@ const Home = () => {
           <code className={styles.code}>pages/index.tsx</code>
         </p>
 
+        <SubscriberButton />
+
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
             <h2>Documentation &rarr;</h2>
@@ -125,3 +127,31 @@ const Home = () => {
 }
 
 export default Home
+
+function SubscriberButton() {
+  const handleSubscribe = useCallback(() => {
+    subscribeDevice({
+      mobileNumber: '9265490495',
+      countryCode: '+7'
+    })
+  }, []);
+  return <button type="button" onClick={handleSubscribe}>Subscribe</button>
+}
+
+interface PhoneNumber {
+  mobileNumber: string
+  countryCode: string
+}
+
+function subscribeDevice(params: PhoneNumber) {
+  const opts: RequestInit = {
+    body: JSON.stringify(params),
+    method: 'post',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return fetch(`${process.env.SMS_READER_API}/device/subscribe`, opts)
+    .then(r => r.json());
+}
