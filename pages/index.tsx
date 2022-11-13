@@ -78,6 +78,9 @@ const Home = () => {
         </p>
 
         <SubscriberButton />
+        <SearchButton />
+        <SmsLogButton />
+        <SmsSearchButton />
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
@@ -153,5 +156,81 @@ function subscribeDevice(params: PhoneNumber) {
     }
   };
   return fetch(`${process.env.SMS_READER_API}/device/subscribe`, opts)
+    .then(r => r.json());
+}
+
+function SearchButton() {
+  const handleSearch = useCallback(async () => {
+    const result = await searchDevice({
+      mobileNumber: '9265490495',
+      countryCode: '+7'
+    });
+    console.log(result);
+  }, []);
+  return <button type="button" onClick={handleSearch}>Search</button>
+}
+
+function searchDevice(params: PhoneNumber) {
+  const opts: RequestInit = {
+    body: JSON.stringify(params),
+    method: 'post',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return fetch(`${process.env.SMS_READER_API}/device/search`, opts)
+    .then(r => r.json());
+}
+
+interface SmsContent {
+  content: string
+}
+
+function SmsLogButton() {
+  const handleLogSms = useCallback(() => {
+    smsLog({
+      mobileNumber: '9265490495',
+      countryCode: '+7',
+      content: String(Date.now())
+    });
+  }, []);
+  return <button type="button" onClick={handleLogSms}>Log Random Sms</button>
+}
+
+function smsLog(params: PhoneNumber & SmsContent) {
+  const opts: RequestInit = {
+    body: JSON.stringify(params),
+    method: 'post',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return fetch(`${process.env.SMS_READER_API}/device/sms/log`, opts)
+    .then(r => r.json());
+}
+
+function SmsSearchButton() {
+  const handleSearchSms = useCallback(async () => {
+    const result = await smsSearch({
+      mobileNumber: '9265490495',
+      countryCode: '+7'
+    });
+    console.log(result);
+  }, []);
+  return <button type="button" onClick={handleSearchSms}>Search SMS</button>
+}
+
+function smsSearch(params: PhoneNumber) {
+  const opts: RequestInit = {
+    body: JSON.stringify(params),
+    method: 'post',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return fetch(`${process.env.SMS_READER_API}/device/sms/search`, opts)
     .then(r => r.json());
 }
