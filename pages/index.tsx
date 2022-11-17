@@ -1,50 +1,13 @@
+import {useCallback} from 'react';
 import Head from "next/head"
 import Image from "next/image"
+import Link from "next/link"
+import {useAuth} from '../features/auth';
 import styles from "../styles/Home.module.css"
-import {useCallback, useEffect, useState} from 'react';
-import { useRouter } from "next/router"
-
-// highlight-start
-import { Configuration, V0alpha2Api, Session, Identity } from "@ory/client"
-import { edgeConfig } from "@ory/integrations/next"
-
-const ory = new V0alpha2Api(new Configuration(edgeConfig))
-
-// Returns either the email or the username depending on the user's Identity Schema
-const getUserName = (identity: Identity) =>
-  identity.traits.email || identity.traits.username
-// highlight-end
 
 const Home = () => {
-  const router = useRouter()
-
-  // highlight-start
-  const [session, setSession] = useState<Session | undefined>()
-  const [logoutUrl, setLogoutUrl] = useState<string | undefined>()
-
-  useEffect(() => {
-    ory
-      .toSession()
-      .then(({ data }) => {
-        // User has a session!
-        setSession(data)
-        // Create a logout url
-        ory.createSelfServiceLogoutFlowUrlForBrowsers().then(({ data }) => {
-          setLogoutUrl(data.logout_url)
-        })
-      })
-      .catch(() => {
-        // Redirect to login page
-        return router.push(edgeConfig.basePath + "/ui/login")
-      })
-  }, [])
-
-  if (!session) {
-    // Still loading
-    return null
-  }
-  // highlight-end
-
+  const auth = useAuth();
+  if (!auth.session) return null;
   return (
     <div className={styles.container}>
       <Head>
@@ -57,20 +20,17 @@ const Home = () => {
         <h1 className={styles.title}>
           Welcome to{" "}
           <a href="https://nextjs.org">
-            Next.js,{" "}
-            {
-              // highlight-next-line
-              getUserName(session?.identity)
-            }
-            !
+            Next.js, {auth.userName}!
           </a>
         </h1>
 
-        {/* highlight-start */}
         <p className={styles.description}>
-          <a href={logoutUrl}>Log out</a>
+          <Link href="/phone_list">To List</Link>
         </p>
-        {/* highlight-end */}
+
+        <p className={styles.description}>
+          <a href={auth.logoutUrl}>Log out</a>
+        </p>
 
         <p className={styles.description}>
           Get started by editing{" "}
@@ -134,7 +94,7 @@ export default Home
 function SubscriberButton() {
   const handleSubscribe = useCallback(() => {
     subscribeDevice({
-      mobileNumber: '9265490495',
+      mobileNumber: '9991002030',
       countryCode: '+7'
     })
   }, []);
@@ -162,7 +122,7 @@ function subscribeDevice(params: PhoneNumber) {
 function SearchButton() {
   const handleSearch = useCallback(async () => {
     const result = await searchDevice({
-      mobileNumber: '9265490495',
+      mobileNumber: '9991002030',
       countryCode: '+7'
     });
     console.log(result);
@@ -190,7 +150,7 @@ interface SmsContent {
 function SmsLogButton() {
   const handleLogSms = useCallback(() => {
     smsLog({
-      mobileNumber: '9265490495',
+      mobileNumber: '9991002030',
       countryCode: '+7',
       content: String(Date.now())
     });
@@ -214,7 +174,7 @@ function smsLog(params: PhoneNumber & SmsContent) {
 function SmsSearchButton() {
   const handleSearchSms = useCallback(async () => {
     const result = await smsSearch({
-      mobileNumber: '9265490495',
+      mobileNumber: '9991002030',
       countryCode: '+7'
     });
     console.log(result);
