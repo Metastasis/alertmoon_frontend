@@ -122,3 +122,12 @@
     flex-direction: column;
   }
 }
+
+.list {
+  list-style: none;
+}
+
+.list > li {
+  margin: 16px 0;
+  cursor: pointer;
+}

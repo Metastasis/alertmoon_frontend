@@ -1,3 +1,5 @@
+import {useEffect} from 'react';
+import useSWR from 'swr'
 import Head from "next/head"
 import Image from "next/image"
 import {useAuth} from '../features/auth';
@@ -16,10 +18,7 @@ const PhoneList = () => {
       </Head>
 
       <div className={styles.sidebar}>
-        <ul>
-          <li>78883330044</li>
-          <li>79992220033</li>
-        </ul>
+        <PhonesList />
       </div>
 
       <main className={styles.main}>
@@ -45,3 +44,38 @@ const PhoneList = () => {
 }
 
 export default PhoneList
+
+function PhonesList() {
+  const {data} = useSWR('phone_list', () => searchDevice());
+  return (
+    <ul className={styles.list}>
+      {data?.map(device => (
+        <li key={device.phoneNumber}>{device.phoneNumber}</li>
+      ))}
+    </ul>
+  )
+}
+
+interface SearchDevice {
+  mobileNumber: string
+  countryCode: string
+}
+
+type SearchDeviceResult = Array<SearchDevice & {phoneNumber: string}>;
+
+function searchDevice(params: any = {page: 1}): Promise<SearchDeviceResult> {
+  const opts: RequestInit = {
+    body: JSON.stringify(params),
+    method: 'post',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return fetch(`${process.env.SMS_READER_API}/device/search`, opts)
+    .then(r => r.json()).then((data) => data.map((d: any) => ({...d, phoneNumber: formatPhone(d)})));
+}
+
+function formatPhone(device: SearchDevice) {
+  return `${device.countryCode}${device.mobileNumber}`;
+}
