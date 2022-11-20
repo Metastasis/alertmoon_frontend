@@ -1,5 +1,6 @@
-import {useEffect} from 'react';
+import {useCallback, useState} from 'react';
 import useSWR from 'swr'
+import {useRouter} from 'next/router';
 import Head from "next/head"
 import Image from "next/image"
 import {useAuth} from '../features/auth';
@@ -8,6 +9,10 @@ import Link from 'next/link';
 
 const PhoneList = () => {
   const auth = useAuth();
+  const [selectedPhone, selectPhone] = useState<Device | null>(null);
+  const onSelectPhone = useCallback((device: Device) => {
+    selectPhone(device);
+  }, [selectPhone]);
   if (!auth.session) return null;
   return (
     <div className={styles.container}>
@@ -18,13 +23,14 @@ const PhoneList = () => {
       </Head>
 
       <div className={styles.sidebar}>
-        <PhonesList />
+        <PhonesList device={selectedPhone} onSelectPhone={onSelectPhone} />
       </div>
 
       <main className={styles.main}>
         <p className={styles.description}>
           <Link href="/">Главная</Link>
         </p>
+        {selectedPhone && <SmsList device={selectedPhone} />}
       </main>
 
       <footer className={styles.footer}>
@@ -45,12 +51,24 @@ const PhoneList = () => {
 
 export default PhoneList
 
-function PhonesList() {
+interface PhoneListProps {
+  onSelectPhone: (device: Device) => void,
+  device: Device | null
+}
+function PhonesList({device, onSelectPhone}: PhoneListProps) {
   const {data} = useSWR('phone_list', () => searchDevice());
+  const onSelect = useCallback((device: Device) => {
+    onSelectPhone(device);
+  }, [onSelectPhone]);
   return (
     <ul className={styles.list}>
-      {data?.map(device => (
-        <li key={device.phoneNumber}>{device.phoneNumber}</li>
+      {data?.map(d => (
+        <li
+          key={d.phoneNumber}
+          onClick={() => onSelect(d)}
+        >
+          {d.phoneNumber === device?.phoneNumber && 'V '}{d.phoneNumber}
+        </li>
       ))}
     </ul>
   )
@@ -60,10 +78,9 @@ interface SearchDevice {
   mobileNumber: string
   countryCode: string
 }
+type Device = SearchDevice & {phoneNumber: string};
 
-type SearchDeviceResult = Array<SearchDevice & {phoneNumber: string}>;
-
-function searchDevice(params: any = {page: 1}): Promise<SearchDeviceResult> {
+function searchDevice(params: any = {page: 1}): Promise<Device[]> {
   const opts: RequestInit = {
     body: JSON.stringify(params),
     method: 'post',
@@ -78,4 +95,32 @@ function searchDevice(params: any = {page: 1}): Promise<SearchDeviceResult> {
 
 function formatPhone(device: SearchDevice) {
   return `${device.countryCode}${device.mobileNumber}`;
+}
+
+function smsSearch(params: SearchDevice): Promise<Array<{content: string, id: string}>> {
+  const opts: RequestInit = {
+    body: JSON.stringify(params),
+    method: 'post',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  return fetch(`${process.env.SMS_READER_API}/device/sms/search`, opts)
+    .then(r => r.json())
+    // @ts-ignore
+    .then((data) => data.map(({_id, ...d}) => ({...d, id: _id})));
+}
+
+function SmsList({device}: {device: Device}) {
+  const {data} = useSWR(`${device.countryCode}${device.mobileNumber}`, () => smsSearch({countryCode: device.countryCode, mobileNumber: device.mobileNumber}));
+  return (
+    <ul>
+      {data?.map((sms) => (
+        <li key={sms.id}>
+          {sms.content}
+        </li>
+      ))}
+    </ul>
+  );
 }
