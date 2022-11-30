@@ -45,7 +45,7 @@ export const AuthProvider: React.FC = ({children}) => {
       })
       .catch(() => {
         // Redirect to login page
-        return router.push(edgeConfig.basePath + "/ui/login")
+        return router.push(edgeConfig.basePath + '/ui/login')
       })
   }, [])
   return <AuthContext.Provider value={authValue}>{children}</AuthContext.Provider>;

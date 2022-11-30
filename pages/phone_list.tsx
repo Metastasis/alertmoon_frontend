@@ -76,7 +76,6 @@ function PhonesList({device, onSelectPhone}: PhoneListProps) {
 
 interface SearchDevice {
   mobileNumber: string
-  countryCode: string
 }
 type Device = SearchDevice & {phoneNumber: string};
 
@@ -94,7 +93,7 @@ function searchDevice(params: any = {page: 1}): Promise<Device[]> {
 }
 
 function formatPhone(device: SearchDevice) {
-  return `${device.countryCode}${device.mobileNumber}`;
+  return `+${device.mobileNumber}`;
 }
 
 function smsSearch(params: SearchDevice): Promise<Array<{content: string, id: string}>> {
@@ -113,7 +112,8 @@ function smsSearch(params: SearchDevice): Promise<Array<{content: string, id: st
 }
 
 function SmsList({device}: {device: Device}) {
-  const {data} = useSWR(`${device.countryCode}${device.mobileNumber}`, () => smsSearch({countryCode: device.countryCode, mobileNumber: device.mobileNumber}));
+  const params = {mobileNumber: device.mobileNumber};
+  const {data} = useSWR(`${device.mobileNumber}`, () => smsSearch(params));
   return (
     <ul>
       {data?.map((sms) => (

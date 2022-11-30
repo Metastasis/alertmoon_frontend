@@ -94,8 +94,7 @@ export default Home
 function SubscriberButton() {
   const handleSubscribe = useCallback(() => {
     subscribeDevice({
-      mobileNumber: '9991002030',
-      countryCode: '+7'
+      mobileNumber: '79991002030'
     })
   }, []);
   return <button type="button" onClick={handleSubscribe}>Subscribe</button>
@@ -103,7 +102,6 @@ function SubscriberButton() {
 
 interface PhoneNumber {
   mobileNumber: string
-  countryCode: string
 }
 
 function subscribeDevice(params: PhoneNumber) {
@@ -122,8 +120,7 @@ function subscribeDevice(params: PhoneNumber) {
 function SearchButton() {
   const handleSearch = useCallback(async () => {
     const result = await searchDevice({
-      mobileNumber: '9991002030',
-      countryCode: '+7'
+      mobileNumber: '79991002030'
     });
     console.log(result);
   }, []);
@@ -150,8 +147,7 @@ interface SmsContent {
 function SmsLogButton() {
   const handleLogSms = useCallback(() => {
     smsLog({
-      mobileNumber: '9991002030',
-      countryCode: '+7',
+      mobileNumber: '79991002030',
       content: String(Date.now())
     });
   }, []);
@@ -174,8 +170,7 @@ function smsLog(params: PhoneNumber & SmsContent) {
 function SmsSearchButton() {
   const handleSearchSms = useCallback(async () => {
     const result = await smsSearch({
-      mobileNumber: '9991002030',
-      countryCode: '+7'
+      mobileNumber: '79991002030'
     });
     console.log(result);
   }, []);
