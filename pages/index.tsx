@@ -1,9 +1,9 @@
 import {useCallback} from 'react';
-import Head from "next/head"
-import Image from "next/image"
-import Link from "next/link"
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
 import {useAuth} from '../features/auth';
-import styles from "../styles/Home.module.css"
+import styles from '../styles/Home.module.css';
 
 const Home = () => {
   const auth = useAuth();
@@ -18,10 +18,7 @@ const Home = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to{" "}
-          <a href="https://nextjs.org">
-            Next.js, {auth.userName}!
-          </a>
+          Welcome to <a href="https://nextjs.org">Next.js, {auth.userName}!</a>
         </h1>
 
         <p className={styles.description}>
@@ -33,7 +30,7 @@ const Home = () => {
         </p>
 
         <p className={styles.description}>
-          Get started by editing{" "}
+          Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>
         </p>
 
@@ -55,16 +52,14 @@ const Home = () => {
 
           <a
             href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
+            className={styles.card}>
             <h2>Examples &rarr;</h2>
             <p>Discover and deploy boilerplate example Next.js projects.</p>
           </a>
 
           <a
             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
+            className={styles.card}>
             <h2>Deploy &rarr;</h2>
             <p>
               Instantly deploy your Next.js site to a public URL with Vercel.
@@ -77,31 +72,34 @@ const Home = () => {
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
+          rel="noopener noreferrer">
+          Powered by{' '}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
 
 function SubscriberButton() {
   const handleSubscribe = useCallback(() => {
     subscribeDevice({
-      mobileNumber: '79991002030'
-    })
+      mobileNumber: '79991002030',
+    });
   }, []);
-  return <button type="button" onClick={handleSubscribe}>Subscribe</button>
+  return (
+    <button type="button" onClick={handleSubscribe}>
+      Subscribe
+    </button>
+  );
 }
 
 interface PhoneNumber {
-  mobileNumber: string
+  mobileNumber: string;
 }
 
 function subscribeDevice(params: PhoneNumber) {
@@ -110,21 +108,26 @@ function subscribeDevice(params: PhoneNumber) {
     method: 'post',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   };
-  return fetch(`${process.env.SMS_READER_API}/device/subscribe`, opts)
-    .then(r => r.json());
+  return fetch(`${process.env.ALERTMOON_API}/device/subscribe`, opts).then(r =>
+    r.json(),
+  );
 }
 
 function SearchButton() {
   const handleSearch = useCallback(async () => {
     const result = await searchDevice({
-      mobileNumber: '79991002030'
+      mobileNumber: '79991002030',
     });
     console.log(result);
   }, []);
-  return <button type="button" onClick={handleSearch}>Search</button>
+  return (
+    <button type="button" onClick={handleSearch}>
+      Search
+    </button>
+  );
 }
 
 function searchDevice(params: PhoneNumber) {
@@ -133,25 +136,30 @@ function searchDevice(params: PhoneNumber) {
     method: 'post',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   };
-  return fetch(`${process.env.SMS_READER_API}/device/search`, opts)
-    .then(r => r.json());
+  return fetch(`${process.env.ALERTMOON_API}/pattern/search`, opts).then(r =>
+    r.json(),
+  );
 }
 
 interface SmsContent {
-  content: string
+  content: string;
 }
 
 function SmsLogButton() {
   const handleLogSms = useCallback(() => {
     smsLog({
       mobileNumber: '79991002030',
-      content: String(Date.now())
+      content: String(Date.now()),
     });
   }, []);
-  return <button type="button" onClick={handleLogSms}>Log Random Sms</button>
+  return (
+    <button type="button" onClick={handleLogSms}>
+      Log Random Sms
+    </button>
+  );
 }
 
 function smsLog(params: PhoneNumber & SmsContent) {
@@ -160,21 +168,26 @@ function smsLog(params: PhoneNumber & SmsContent) {
     method: 'post',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   };
-  return fetch(`${process.env.SMS_READER_API}/device/sms/log`, opts)
-    .then(r => r.json());
+  return fetch(`${process.env.ALERTMOON_API}/device/sms/log`, opts).then(r =>
+    r.json(),
+  );
 }
 
 function SmsSearchButton() {
   const handleSearchSms = useCallback(async () => {
     const result = await smsSearch({
-      mobileNumber: '79991002030'
+      mobileNumber: '79991002030',
     });
     console.log(result);
   }, []);
-  return <button type="button" onClick={handleSearchSms}>Search SMS</button>
+  return (
+    <button type="button" onClick={handleSearchSms}>
+      Search SMS
+    </button>
+  );
 }
 
 function smsSearch(params: PhoneNumber) {
@@ -183,9 +196,10 @@ function smsSearch(params: PhoneNumber) {
     method: 'post',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   };
-  return fetch(`${process.env.SMS_READER_API}/device/sms/search`, opts)
-    .then(r => r.json());
+  return fetch(`${process.env.ALERTMOON_API}/device/sms/search`, opts).then(r =>
+    r.json(),
+  );
 }

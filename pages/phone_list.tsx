@@ -1,18 +1,20 @@
 import {useCallback, useState} from 'react';
-import useSWR from 'swr'
-import {useRouter} from 'next/router';
-import Head from "next/head"
-import Image from "next/image"
+import useSWR from 'swr';
+import Head from 'next/head';
+import Image from 'next/image';
 import {useAuth} from '../features/auth';
-import styles from "./PhoneList.module.css";
+import styles from './PhoneList.module.css';
 import Link from 'next/link';
 
 const PhoneList = () => {
   const auth = useAuth();
   const [selectedPhone, selectPhone] = useState<Device | null>(null);
-  const onSelectPhone = useCallback((device: Device) => {
-    selectPhone(device);
-  }, [selectPhone]);
+  const onSelectPhone = useCallback(
+    (device: Device) => {
+      selectPhone(device);
+    },
+    [selectPhone],
+  );
   if (!auth.session) return null;
   return (
     <div className={styles.container}>
@@ -37,45 +39,45 @@ const PhoneList = () => {
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{" "}
+          rel="noopener noreferrer">
+          Powered by{' '}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default PhoneList
+export default PhoneList;
 
 interface PhoneListProps {
-  onSelectPhone: (device: Device) => void,
-  device: Device | null
+  onSelectPhone: (device: Device) => void;
+  device: Device | null;
 }
 function PhonesList({device, onSelectPhone}: PhoneListProps) {
   const {data} = useSWR('phone_list', () => searchDevice());
-  const onSelect = useCallback((device: Device) => {
-    onSelectPhone(device);
-  }, [onSelectPhone]);
+  const onSelect = useCallback(
+    (device: Device) => {
+      onSelectPhone(device);
+    },
+    [onSelectPhone],
+  );
   return (
     <ul className={styles.list}>
       {data?.map(d => (
-        <li
-          key={d.phoneNumber}
-          onClick={() => onSelect(d)}
-        >
-          {d.phoneNumber === device?.phoneNumber && 'V '}{d.phoneNumber}
+        <li key={d.phoneNumber} onClick={() => onSelect(d)}>
+          {d.phoneNumber === device?.phoneNumber && 'V '}
+          {d.phoneNumber}
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 interface SearchDevice {
-  mobileNumber: string
+  mobileNumber: string;
 }
 type Device = SearchDevice & {phoneNumber: string};
 
@@ -85,30 +87,35 @@ function searchDevice(params: any = {page: 1}): Promise<Device[]> {
     method: 'post',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   };
-  return fetch(`${process.env.SMS_READER_API}/device/search`, opts)
-    .then(r => r.json()).then((data) => data.map((d: any) => ({...d, phoneNumber: formatPhone(d)})));
+  return fetch(`${process.env.ALERTMOON_API}/device/search`, opts)
+    .then(r => r.json())
+    .then(data => data.map((d: any) => ({...d, phoneNumber: formatPhone(d)})));
 }
 
 function formatPhone(device: SearchDevice) {
   return `+${device.mobileNumber}`;
 }
 
-function smsSearch(params: SearchDevice): Promise<Array<{content: string, id: string}>> {
+function smsSearch(
+  params: SearchDevice,
+): Promise<Array<{content: string; id: string}>> {
   const opts: RequestInit = {
     body: JSON.stringify(params),
     method: 'post',
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json'
-    }
+      'Content-Type': 'application/json',
+    },
   };
-  return fetch(`${process.env.SMS_READER_API}/device/sms/search`, opts)
-    .then(r => r.json())
-    // @ts-ignore
-    .then((data) => data.map(({_id, ...d}) => ({...d, id: _id})));
+  return (
+    fetch(`${process.env.ALERTMOON_API}/device/sms/search`, opts)
+      .then(r => r.json())
+      // @ts-ignore
+      .then(data => data.map(({_id, ...d}) => ({...d, id: _id})))
+  );
 }
 
 function SmsList({device}: {device: Device}) {
@@ -116,10 +123,8 @@ function SmsList({device}: {device: Device}) {
   const {data} = useSWR(`${device.mobileNumber}`, () => smsSearch(params));
   return (
     <ul>
-      {data?.map((sms) => (
-        <li key={sms.id}>
-          {sms.content}
-        </li>
+      {data?.map(sms => (
+        <li key={sms.id}>{sms.content}</li>
       ))}
     </ul>
   );

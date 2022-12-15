@@ -1,9 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
-    SMS_READER_API: process.env.SMS_READER_API
+    ALERTMOON_API: process.env.ALERTMOON_API,
   },
   reactStrictMode: true,
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
