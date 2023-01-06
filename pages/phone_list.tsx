@@ -1,4 +1,3 @@
-import {useCallback, useState} from 'react';
 import useSWR from 'swr';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -8,13 +7,6 @@ import Link from 'next/link';
 
 const PhoneList = () => {
   const auth = useAuth();
-  const [selectedPhone, selectPhone] = useState<Device | null>(null);
-  const onSelectPhone = useCallback(
-    (device: Device) => {
-      selectPhone(device);
-    },
-    [selectPhone],
-  );
   if (!auth.session) return null;
   return (
     <div className={styles.container}>
@@ -24,15 +16,11 @@ const PhoneList = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className={styles.sidebar}>
-        <PhonesList device={selectedPhone} onSelectPhone={onSelectPhone} />
-      </div>
-
       <main className={styles.main}>
         <p className={styles.description}>
           <Link href="/">Главная</Link>
         </p>
-        {selectedPhone && <SmsList device={selectedPhone} />}
+        <SmsList />
       </main>
 
       <footer className={styles.footer}>
@@ -52,36 +40,7 @@ const PhoneList = () => {
 
 export default PhoneList;
 
-interface PhoneListProps {
-  onSelectPhone: (device: Device) => void;
-  device: Device | null;
-}
-function PhonesList({device, onSelectPhone}: PhoneListProps) {
-  const {data} = useSWR('phone_list', () => searchDevice());
-  const onSelect = useCallback(
-    (device: Device) => {
-      onSelectPhone(device);
-    },
-    [onSelectPhone],
-  );
-  return (
-    <ul className={styles.list}>
-      {data?.map(d => (
-        <li key={d.phoneNumber} onClick={() => onSelect(d)}>
-          {d.phoneNumber === device?.phoneNumber && 'V '}
-          {d.phoneNumber}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-interface SearchDevice {
-  mobileNumber: string;
-}
-type Device = SearchDevice & {phoneNumber: string};
-
-function searchDevice(params: any = {page: 1}): Promise<Device[]> {
+function smsSearch(params = {}): Promise<Array<{content: string; id: string}>> {
   const opts: RequestInit = {
     body: JSON.stringify(params),
     method: 'post',
@@ -90,41 +49,17 @@ function searchDevice(params: any = {page: 1}): Promise<Device[]> {
       'Content-Type': 'application/json',
     },
   };
-  return fetch(`${process.env.ALERTMOON_API}/device/search`, opts)
-    .then(r => r.json())
-    .then(data => data.map((d: any) => ({...d, phoneNumber: formatPhone(d)})));
-}
-
-function formatPhone(device: SearchDevice) {
-  return `+${device.mobileNumber}`;
-}
-
-function smsSearch(
-  params: SearchDevice,
-): Promise<Array<{content: string; id: string}>> {
-  const opts: RequestInit = {
-    body: JSON.stringify(params),
-    method: 'post',
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-  return (
-    fetch(`${process.env.ALERTMOON_API}/device/sms/search`, opts)
-      .then(r => r.json())
-      // @ts-ignore
-      .then(data => data.map(({_id, ...d}) => ({...d, id: _id})))
+  return fetch(`${process.env.ALERTMOON_API}/notification/search`, opts).then(
+    r => r.json(),
   );
 }
 
-function SmsList({device}: {device: Device}) {
-  const params = {mobileNumber: device.mobileNumber};
-  const {data} = useSWR(`${device.mobileNumber}`, () => smsSearch(params));
+function SmsList() {
+  const {data} = useSWR('notificationList', () => smsSearch());
   return (
     <ul>
-      {data?.map(sms => (
-        <li key={sms.id}>{sms.content}</li>
+      {data?.map(notification => (
+        <li key={notification.id}>{notification.content}</li>
       ))}
     </ul>
   );
