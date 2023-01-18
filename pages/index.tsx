@@ -15,7 +15,7 @@ const Home = () => {
         </h1>
 
         <p className={styles.description}>
-          <Link href="/phone_list">To List</Link>
+          <Link href="/app">К приложению</Link>
         </p>
 
         <p className={styles.description}>
