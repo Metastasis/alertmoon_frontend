@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  align-items: center;
+  padding: 1em 0;
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.logo {
+  user-select: none;
+}
+
+.menu {
+  margin: 0 auto;
+}
