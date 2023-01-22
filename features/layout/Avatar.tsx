@@ -4,12 +4,14 @@ import styles from './Avatar.module.css';
 
 type Props = {
   username: string
+  onClick?: () => void
 };
 
 export default function Avatar(props: Props) {
-  const letter = props.username[0];
+  const {username, onClick} = props;
+  const letter = username[0];
   return (
-    <div className={cc(styles.root, 'font16')}>
+    <div className={cc(styles.root, 'font16')} onClick={onClick}>
       {letter}
     </div>
   );

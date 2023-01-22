@@ -1,3 +1,7 @@
+.wrapper {
+  border-bottom: thin solid var(--color-border);
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -8,6 +12,7 @@
 
 .logo {
   user-select: none;
+  cursor: pointer;
 }
 
 .menu {

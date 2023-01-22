@@ -44,6 +44,7 @@ export const AuthProvider: React.FC = ({children}) => {
         // Create a logout url
         ory.createSelfServiceLogoutFlowUrlForBrowsers().then(({data}) => {
           setLogoutUrl(data.logout_url);
+          router.push('/app');
         });
       })
       .catch(() => {
