@@ -1,8 +1,7 @@
 import {NotificationService} from './NotificationService';
-import {NotificationList} from './NotificationModel';
 
 
-type FindNotifications = (dependencies: {notificationService: NotificationService}) => Promise<NotificationList>;
+type Deps = {notificationService: NotificationService};
 
 /*
 * Search Notification Use Case
@@ -13,7 +12,10 @@ type FindNotifications = (dependencies: {notificationService: NotificationServic
 * NotificationService -> check for status and display either an error or a list
 * */
 
-// TODO: Where it is supposed to go?
-export const findNotifications: FindNotifications = ({notificationService}) => {
-  return notificationService.search();
+export const useNotificationsList = ({notificationService}: Deps) => {
+  return {
+    list: notificationService.data,
+    search: notificationService.search,
+    nextPage: notificationService.nextPage
+  };
 }

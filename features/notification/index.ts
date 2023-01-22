@@ -1,3 +1,2 @@
-export {NotificationProvider} from './Service';
-export {useNotifications} from './adapter';
+export {useNotifications, Provider as NotificationProvider} from './NotificationAdapter';
 export {default as PageList} from './PageList'
