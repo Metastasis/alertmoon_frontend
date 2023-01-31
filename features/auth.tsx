@@ -21,7 +21,13 @@ const AuthContext = createContext<AuthType>({
   userName: undefined,
 });
 
-const ory = new V0alpha2Api(new Configuration(edgeConfig));
+// TODO: fix cors
+const ory = new V0alpha2Api(new Configuration({
+  basePath: 'http://127.0.0.1:4444',
+  baseOptions: {
+    withCredentials: true
+  }
+}));
 
 export const AuthProvider: React.FC = ({children}) => {
   const router = useRouter();
@@ -49,7 +55,8 @@ export const AuthProvider: React.FC = ({children}) => {
       })
       .catch(() => {
         // Redirect to login page
-        return router.push(edgeConfig.basePath + '/ui/login');
+        // return router.push(edgeConfig.basePath + '/ui/login');
+        return window.open('http://127.0.0.1:4455/login');
       });
   }, []);
   return (
