@@ -22,12 +22,7 @@ const AuthContext = createContext<AuthType>({
 });
 
 // TODO: fix cors
-const ory = new V0alpha2Api(new Configuration({
-  basePath: 'http://127.0.0.1:4444',
-  baseOptions: {
-    withCredentials: true
-  }
-}));
+const ory = new V0alpha2Api(new Configuration(edgeConfig));
 
 export const AuthProvider: React.FC = ({children}) => {
   const router = useRouter();
