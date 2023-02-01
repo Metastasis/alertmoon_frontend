@@ -32,7 +32,7 @@ export default function MenuList(props: Props) {
 
 function Link({ children, className, ...rest }: LinkProps & {children: ReactNode, className?: string}) {
   return (
-    <NextLink {...rest} passHref>
+    <NextLink {...rest} passHref legacyBehavior>
       <a className={className}>
         {children}
       </a>

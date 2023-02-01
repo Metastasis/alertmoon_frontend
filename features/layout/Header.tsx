@@ -1,5 +1,5 @@
 import {DragEventHandler, useMemo, useCallback} from 'react';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import {useRouter} from 'next/router';
 import Avatar from './Avatar';
 import MenuList from './MenuList';

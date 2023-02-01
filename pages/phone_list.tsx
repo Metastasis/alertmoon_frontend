@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import Head from 'next/head';
-import Image from 'next/image';
+import Image from 'next/legacy/image';
 import {useAuth} from '../features/auth';
 import styles from './PhoneList.module.css';
 import Link from 'next/link';
