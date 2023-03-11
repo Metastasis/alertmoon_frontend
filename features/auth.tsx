@@ -6,7 +6,6 @@ import React, {
   useMemo,
 } from 'react';
 import {Configuration, V0alpha2Api, Session, Identity} from '@ory/client';
-import {edgeConfig} from '@ory/integrations/next';
 import {useRouter} from 'next/router';
 
 interface AuthType {
@@ -15,14 +14,17 @@ interface AuthType {
   userName: string | undefined;
 }
 
+const cfg = {
+  basePath: process.env.ORY_SDK_URL
+};
+
 const AuthContext = createContext<AuthType>({
   session: undefined,
   logoutUrl: undefined,
   userName: undefined,
 });
 
-// TODO: fix cors
-const ory = new V0alpha2Api(new Configuration(edgeConfig));
+const ory = new V0alpha2Api(new Configuration(cfg));
 
 export const AuthProvider: React.FC = ({children}) => {
   const router = useRouter();
@@ -49,9 +51,7 @@ export const AuthProvider: React.FC = ({children}) => {
         });
       })
       .catch(() => {
-        // Redirect to login page
-        // return router.push(edgeConfig.basePath + '/ui/login');
-        return window.open('http://127.0.0.1:4455/login');
+        return router.push(process.env.ALERTMOON_LOGIN_URL || '');
       });
   }, []);
   return (
