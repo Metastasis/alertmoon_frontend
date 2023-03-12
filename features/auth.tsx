@@ -15,7 +15,10 @@ interface AuthType {
 }
 
 const cfg = {
-  basePath: process.env.ORY_SDK_URL
+  basePath: process.env.ORY_SDK_URL,
+  baseOptions: {
+    withCredentials: true
+  }
 };
 
 const AuthContext = createContext<AuthType>({
@@ -51,7 +54,14 @@ export const AuthProvider: React.FC = ({children}) => {
         });
       })
       .catch(() => {
-        return router.push(process.env.ALERTMOON_LOGIN_URL || '');
+        // TODO: make checks in test or before app starts
+        //  and change type for const string in d.ts
+        if (
+          typeof process.env.ALERTMOON_LOGIN_URL !== 'string'
+          || !process.env.ALERTMOON_LOGIN_URL.length
+        ) return;
+        const loginUrl = new URL(process.env.ALERTMOON_LOGIN_URL);
+        return router.push(loginUrl);
       });
   }, []);
   return (
