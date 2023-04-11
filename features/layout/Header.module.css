@@ -18,3 +18,8 @@
 .menu {
   margin: 0 auto;
 }
+
+/* Create emotion styles for css light shadow at the bottom with 1px wide */
+.shadow {
+  box-shadow: ;
+}
