@@ -3,7 +3,7 @@ import {NotificationList} from './NotificationModel';
 import {SearchParams} from './NotificationService';
 
 
-export function searchNotifications(params: SearchParams = {}) {
+export function searchNotifications(params: SearchParams = {}): Promise<NotificationList> {
   return axios.post<NotificationList>(`${process.env.ALERTMOON_API}/notification/search`, params, {withCredentials: true})
     .then(res => res.data.map(mapResponse));
 }

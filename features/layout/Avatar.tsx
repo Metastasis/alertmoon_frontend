@@ -1,4 +1,5 @@
 import cc from 'clsx';
+import {Avatar} from '@mantine/core';
 import styles from './Avatar.module.css';
 
 
@@ -7,12 +8,12 @@ type Props = {
   onClick?: () => void
 };
 
-export default function Avatar(props: Props) {
+export default function Avatar2(props: Props) {
   const {username, onClick} = props;
   const letter = username[0];
   return (
-    <div className={cc(styles.root, 'font16')} onClick={onClick}>
+    <Avatar sx={{cursor: 'pointer'}} variant="outline" color="orange" radius="xl" onClick={onClick}>
       {letter}
-    </div>
+    </Avatar>
   );
 }

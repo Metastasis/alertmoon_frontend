@@ -1,5 +1,6 @@
 import {DragEventHandler, useMemo, useCallback} from 'react';
 import Image from 'next/legacy/image';
+import {Flex, Header} from '@mantine/core';
 import {useRouter} from 'next/router';
 import Avatar from './Avatar';
 import MenuList from './MenuList';
@@ -11,7 +12,7 @@ const onStopDragging: DragEventHandler = (e) => {
   e.preventDefault();
 }
 
-export default function Header() {
+export default function Header2() {
   const router = useRouter();
   const auth = useAuth();
   const isAuthorized = Boolean(auth.session);
@@ -28,8 +29,8 @@ export default function Header() {
   const onRedirectToMain = useCallback(() => router.push(isAuthorized ? '/app' : '/'), [router, isAuthorized]);
   const onRedirectToProfile = useCallback(() => router.push('/profile'), [router]);
   return (
-    <div className={styles.wrapper}>
-      <nav className={styles.header}>
+    <Header height="100%" p="md">
+      <Flex align="center" maw="50rem" m="0 auto">
         <Image
           className={styles.logo}
           src="/logo.png"
@@ -43,7 +44,7 @@ export default function Header() {
         {auth.session && (
           <Avatar username={auth.userName || 'User'} onClick={onRedirectToProfile} />
         )}
-      </nav>
-    </div>
+      </Flex>
+    </Header>
   );
 }

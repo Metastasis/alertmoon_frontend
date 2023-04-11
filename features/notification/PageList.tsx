@@ -1,26 +1,55 @@
 import useSWR from 'swr';
-import {useNotifications} from './NotificationAdapter';
-import {useNotificationsList} from './ListApplication';
+import {Container, Center, Title, Loader, Paper, Text} from '@mantine/core';
+import {searchNotifications} from './api';
+import {NotificationModel} from './NotificationModel';
 
 export default function PageList() {
-  const notifications = useNotifications();
-  const list = useNotificationsList({notificationService: notifications});
-  const result = useSWR('notification.PageList', () => list.search());
-  // TODO: состояние загрузки и ошибки это часть юзкейса в моем видении, но оно во вьюхе
-  // Куда его деть?
-  // И почему useNotificationList такой пустой?
-  // Не должно ли там быть управления статусом как строкой?
+  const result = useSWR('notification.PageList', () => searchNotifications());
   return (
-    <div>
-      <ul>
-        {list.list.map((notification) => (
-          <li key={notification.id}>
-            {notification.title} ({notification.createdAt}) — {notification.content}
-          </li>
-        ))}
-      </ul>
-      {result.error && 'Произошла ошибка. Попробуй позже'}
-      {!result.data && !result.error && 'Загружаем список'}
-    </div>
+    <Container p="md">
+      {result.data && result.data.length !== 0 ? (
+        <ul>
+          {result.data.map((notification) => (
+            <ListItem key={notification.id} {...notification} />
+          ))}
+        </ul>
+      ) : null}
+      {result.data?.length === 0 && <ListEmpty />}
+      {result.error && <ListError />}
+      {!result.data && !result.error && <ListLoading />}
+    </Container>
   )
+}
+
+function ListEmpty() {
+  return (
+    <Center>
+      <Title order={3}>Список пуст</Title>
+    </Center>
+  );
+}
+
+function ListLoading() {
+  return (
+    <Center>
+      <Title order={3}>Загружаем список</Title>
+      <Loader ml="xs"/>
+    </Center>
+  );
+}
+
+function ListError() {
+  return (
+    <Center>
+      <Title order={3}>Ошибка загрузки списка</Title>
+    </Center>
+  );
+}
+
+function ListItem({content}: NotificationModel) {
+  return (
+    <Paper shadow="sm" p="md" mb="md">
+      <Text size="md">{content}</Text>
+    </Paper>
+  );
 }
